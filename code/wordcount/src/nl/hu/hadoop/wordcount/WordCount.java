@@ -24,6 +24,8 @@ public class WordCount {
 		job.setInputFormatClass(TextInputFormat.class);
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(IntWritable.class);
+                job.setMapOutputKeyClass(Text.class);
+                job.setMapOutputValueClass(Text.class);
 
 		job.waitForCompletion(true);
 	}
@@ -31,7 +33,7 @@ public class WordCount {
 
 class WordCountMapper extends Mapper<LongWritable, Text, Text, Text> {
 
-	public void map(Text Key, Text value, Context context) throws IOException, InterruptedException {
+	public void map(LongWritable Key, Text value, Context context) throws IOException, InterruptedException {
         StringTokenizer itr = new StringTokenizer(value.toString(), "\n");
         while (itr.hasMoreTokens()) {
             StringTokenizer itr2 = new StringTokenizer(itr.nextToken());
