@@ -36,84 +36,35 @@ public class WordCount {
 	class WordCountMapper extends Mapper<LongWritable, Text, Text, Text> {
 
 	public void map(LongWritable Key, Text value, Context context) throws IOException, InterruptedException {
-		String[] words = value.toString().split("\\s");
+		Log log = LogFactory.getLog(WordCountMapper.class);
 
-		String[] alphabet = { "a", "b", "c", "d", "e", "f", "g",
-				"h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
-				"u", "v", "w", "x", "y", "z" };
+		int lineN = 0;
 
-		int wordCounter = 0;
+		String[] parts = line.split(",");
 
-		for (String word : words) {
-			wordCounter += 1;
-			String MyWord = word.replaceAll("[^a-zA-Z]", "");
-			MyWord = MyWord.toLowerCase();
-
-			char[] MyWordCharacters = MyWord.toCharArray();
-
-			int characterCount = MyWordCharacters.length;
-
-			Log log = LogFactory.getLog(WordCountMapper.class);
-
-			for(int i = 0; i < characterCount; i++) {
+		log.info(parts[0]);
+		if(!parts[0].equals("Letter")) {
+			log.info(parts[0] + " DOESNT EQUAL LETTER");
+			int xTotal = 0;
+			int i = 0;
+			for(String part : parts) {
 				if(i != 0) {
-					if(i != (characterCount-1)) {
-						char letterErna = MyWordCharacters[(i + 1)];
-
-
-						StringBuilder sb = new StringBuilder();
-
-						int j = 0;
-						for (String letter : alphabet) {
-							if (j != 0) {
-								sb.append(",");
-							}
-							if (letter.equals(Character.toString(letterErna))) {
-								sb.append("1");
-							} else {
-								sb.append("0");
-							}
-							j += 1;
-						}
-						context.write(new Text(Character.toString(MyWordCharacters[i])), new Text(sb.toString()));
-					}
+					log.info("adding " + Integer.parseInt(part.trim()) + " to " + xTotal);
+					xTotal += Integer.parseInt(part.trim());
 				}
-
+				i += 1;
 			}
+			log.info("GOT AS XTOTAL: " + xTotal);
 		}
+		log.info("line: " + lineN);
+		lineN += 1;
+		log.info("HUUH LINE: " + lineN);
+
 	}
 }
 
 class WordCountReducer extends Reducer<Text, Text, Text, Text> {
 	public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-		Log log = LogFactory.getLog(WordCountMapper.class);
-		String[] alphabet = { "a", "b", "c", "d", "e", "f", "g",
-				"h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
-				"u", "v", "w", "x", "y", "z" };
-		if (key.equals(new Text("a"))) {
-			context.write(new Text("Letter, "), new Text(String.join(",", alphabet)));
-		}
-		Integer[] countArray = new Integer[26];
-		Arrays.fill(countArray, 0);
 
-		StringBuilder sb = new StringBuilder();
-		for (Text i : values ) {
-			String[] numbers = i.toString().split(",");
-			for(int k = 0; k < numbers.length; k++) {
-				if (numbers[k].toString().equals("1")) {
-					countArray[k] += 1;
-				}
-			}
-		}
-		int l = 0;
-		for(Integer c : countArray) {
-			if(l != 0) {
-				sb.append(',');
-			}
-			sb.append(c);
-			l += 1;
-		}
-
-		context.write(new Text(key + ","), new Text(sb.toString()));
 	}
 }
