@@ -54,31 +54,30 @@ public class WordCount {
 			int characterCount = MyWordCharacters.length;
 
 			Log log = LogFactory.getLog(WordCountMapper.class);
+			log.info("word: '" + MyWord + "' and " + characterCount);
 
 			for(int i = 0; i < characterCount; i++) {
-				if(i != 0) {
-					if(i != (characterCount-1)) {
-						char letterErna = MyWordCharacters[(i + 1)];
+				if(i != (characterCount-1)) {
+					char letterErna = MyWordCharacters[(i + 1)];
 
 
-						StringBuilder sb = new StringBuilder();
+					StringBuilder sb = new StringBuilder();
 
-						int j = 0;
-						for (String letter : alphabet) {
-							if (j != 0) {
-								sb.append(",");
-							}
-							if (letter.equals(Character.toString(letterErna))) {
-								sb.append("1");
-							} else {
-								sb.append("0");
-							}
-							j += 1;
+					int j = 0;
+					for (String letter : alphabet) {
+						if (j != 0) {
+							sb.append(",");
 						}
-						context.write(new Text(Character.toString(MyWordCharacters[i])), new Text(sb.toString()));
+						if (letter.equals(Character.toString(letterErna))) {
+							sb.append("1");
+						} else {
+							sb.append("0");
+						}
+						j += 1;
 					}
-				}
 
+					context.write(new Text(Character.toString(MyWordCharacters[i])), new Text(sb.toString()));
+				}
 			}
 		}
 	}
